@@ -44,9 +44,10 @@ create_file 'app/views/about.haml', '%h1 About'
 
 stylesheets, javascripts, haml_attributes, html_attributes = [], [], [], []
 
+# If we're using the reset CSS, make sure it's added first.
 if use_css_reset
   copy_file File.join(source_path, 'stylesheets', 'reset.css'), 'public/stylesheets/reset.css'
-  stylesheets << 'reset'
+  stylesheets << "'reset'"
 end
 haml_attributes << ':format => :html5' if use_html5
 html_attributes << ":xmlns => 'http://www.w3.org/1999/xhtml'" unless use_html5
@@ -59,12 +60,16 @@ html_attributes = "{ #{html_attributes.join(', ')} }" unless html_attributes.bla
 haml_attributes << ":attr_wrapper => '\"'"
 haml_attributes = haml_attributes.join(', ')
 
+# Add default stylesheets and JS
+stylesheets << "'master'"
+javascripts << "'jquery'" << "'application'"
+
 layout_init = %Q{!!!doctype
 %html#{html_attributes}
   %head
     %title #{fetch_app_name}
-    =stylesheet_link_tag 'master'
-    =javascript_include_tag 'jquery', 'application'
+    =stylesheet_link_tag #{stylesheets.join(', ')}
+    =javascript_include_tag #{javascripts.join(', ')}
   %body
     =yield
 }
