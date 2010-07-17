@@ -9,8 +9,9 @@ source_path = File.join(File.dirname(__FILE__), 'source')
 # Ask all the questions we want to know first.
 #
 use_html5 = yes? 'Use HTML5?'
-use_css_reset = yes? 'Use CSS reset?'
 use_css_960 = yes? 'Use 960 grid CSS?'
+# Don't bother asking about reset if we're using 960, as we use it anyhow.
+use_css_reset = yes? 'Use CSS reset?' unless use_css_960
 
 #
 # Generate main project.
@@ -45,10 +46,17 @@ create_file 'app/views/about.haml', '%h1 About'
 stylesheets, javascripts, haml_attributes, html_attributes = [], [], [], []
 
 # If we're using the reset CSS, make sure it's added first.
-if use_css_reset
+if use_css_reset || use_css_960
   copy_file File.join(source_path, 'stylesheets', 'reset.css'), 'public/stylesheets/reset.css'
   stylesheets << "'reset'"
 end
+
+if use_css_960
+  copy_file File.join(source_path, 'stylesheets', '960.css'), 'public/stylesheets/960.css'
+  stylesheets << "'960'"
+end
+
+
 haml_attributes << ':format => :html5' if use_html5
 html_attributes << ":xmlns => 'http://www.w3.org/1999/xhtml'" unless use_html5
 
