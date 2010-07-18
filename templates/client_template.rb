@@ -5,6 +5,10 @@
 # Path to the shared source files/templates.
 source_path = File.join(File.dirname(__FILE__), 'source')
 
+# Fix a problem with bundler not finding Gemfile when Dir.pwd doesn't return
+# the path the app is located in.
+ENV['BUNDLE_GEMFILE'] = File.join(destination_root, 'Gemfile')
+
 #
 # Ask all the questions we want to know first.
 #
@@ -12,6 +16,8 @@ use_html5 = yes? 'Use HTML5?'
 use_css_960 = yes? 'Use 960 grid CSS?'
 # Don't bother asking about reset if we're using 960, as we use it anyhow.
 use_css_reset = yes? 'Use CSS reset?' unless use_css_960
+use_admin = yes? 'Admin interface (CMS style)?'
+
 
 #
 # Generate main project.
@@ -42,7 +48,6 @@ create_file 'app/views/about.haml', '%h1 About'
 #
 # Create main layout/css/javascript based on options.
 #
-
 stylesheets, javascripts, haml_attributes, html_attributes = [], [], [], []
 
 # If we're using the reset CSS, make sure it's added first.
@@ -87,3 +92,12 @@ haml_init = %Q{  set :haml, { #{haml_attributes} }\n}
 inject_into_file 'app/app.rb', haml_init, :before => "  # set :raise_errors, true"
 create_file 'app/views/layouts/application.haml', layout_init
 create_file 'public/stylesheets/master.css', '/* Add styles! */'
+
+#
+# Create the Admin interface; I don't like decrypt-able passwords so I replace
+# the account model for padrino.
+#
+if use_admin
+  generate :admin
+  copy_file File.join(source_path, 'models', 'account_dm.rb'), 'app/models/account.rb', :force => true
+end
