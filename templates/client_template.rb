@@ -3,7 +3,7 @@
 #
 
 # Path to the shared source files/templates.
-source_path = File.join(File.dirname(__FILE__), 'source')
+source_path = File.join(File.dirname(__FILE__), '..', 'files')
 
 # Fix a problem with bundler not finding Gemfile when Dir.pwd doesn't return
 # the path the app is located in.
