@@ -17,6 +17,7 @@ use_css_960 = yes? 'Use 960 grid CSS?'
 # Don't bother asking about reset if we're using 960, as we use it anyhow.
 use_css_reset = yes? 'Use CSS reset?' unless use_css_960
 use_admin = yes? 'Admin interface (CMS style)?'
+use_git = yes? 'Create git repo?'
 
 
 #
@@ -100,4 +101,13 @@ create_file 'public/stylesheets/master.css', '/* Add styles! */'
 if use_admin
   generate :admin
   copy_file File.join(source_path, 'models', 'account_dm.rb'), 'app/models/account.rb', :force => true
+end
+
+#
+# Initialise a git repository and commit if wanted.
+#
+if use_git
+  git :init
+  git :add, '.'
+  git :commit, 'Initial commit.'
 end
